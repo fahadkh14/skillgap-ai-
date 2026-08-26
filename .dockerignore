@@ -1,0 +1,16 @@
+# Applies to the backend build context (repository root)
+.git
+.env
+.env.local
+node_modules
+frontend/node_modules
+frontend/dist
+backend/__pycache__
+backend/**/__pycache__
+backend/.pytest_cache
+backend/tests
+*.pyc
+*.log
+.vscode
+.idea
+.DS_Store
