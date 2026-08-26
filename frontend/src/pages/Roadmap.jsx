@@ -48,7 +48,7 @@ export default function Roadmap() {
     )
   }
 
-  if (!roadmap) {
+  if (!roadmap || !Array.isArray(roadmap.items) || roadmap.items.length === 0) {
     return (
       <AppLayout title="Learning Roadmap">
         <div className="card">

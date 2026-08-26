@@ -1,6 +1,9 @@
 services:
   mongodb:
-    image: mongo:8
+    # Pinned to 4.4: MongoDB 5.0+ requires a CPU with AVX support, which
+    # not all hosts (older CPUs, some VPS/VM providers, some older
+    # workstations) have. 4.4 is the last version that runs without AVX.
+    image: mongo:4.4
     container_name: skillgap-mongodb
     restart: unless-stopped
     environment:
@@ -12,8 +15,9 @@ services:
     networks:
       - skillgap-network
     healthcheck:
+      # mongo:4.4 ships the legacy `mongo` shell, not `mongosh`
       test: >
-        mongosh --quiet
+        mongo --quiet
         -u $$MONGO_INITDB_ROOT_USERNAME -p $$MONGO_INITDB_ROOT_PASSWORD
         --authenticationDatabase admin
         --eval "db.adminCommand('ping')"
@@ -78,3 +82,4 @@ networks:
 volumes:
   mongodb_data:
     driver: local
+

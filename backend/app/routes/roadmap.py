@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity
 
 from app.extensions import get_db
@@ -24,7 +24,13 @@ def get_roadmap():
 
     roadmap = db.roadmaps.find_one(query, sort=[("updated_at", -1)])
     if not roadmap:
-        return success(None, "No roadmap has been generated yet")
+        # Explicitly send data: null (not {}) so the frontend can tell
+        # "no roadmap yet" apart from "a roadmap with no items".
+        return jsonify({
+            "success": True,
+            "message": "No roadmap has been generated yet",
+            "data": None,
+        }), 200
 
     return success(serialize_doc(roadmap), "Roadmap retrieved")
 
