@@ -12,4 +12,4 @@ jobs:
 
   # Secret Scanning 
   secert-scaning:
-    uses: ./.github/workflows/secert-scanning.yml
+    uses: ./.github/workflows/secret-scanning.yml
