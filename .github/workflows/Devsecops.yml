@@ -22,4 +22,9 @@ jobs:
   docker-scan:
     uses: ./.github/workflows/Docker-scan.yml
     secrets: inherit
+
+  # SonarQube code analysis
+  sonar-scan:
+    uses: ./.github/workflows/Sonar-scan.yml
+    secrets: inherit   
      
