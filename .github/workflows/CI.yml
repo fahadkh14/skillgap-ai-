@@ -29,3 +29,58 @@ jobs:
           run: npm run lint 
           working-directory: frontend
 
+        - name: Docker Login
+          uses: docker/login-action@v4
+          with:
+            username: ${{ vars.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        - name: Docker build and push
+          uses: docker/build-push-action@V6 
+          with:
+            context: ./frontend
+            file: ./frontend/Dockerfile   
+            push: true
+            tags: ${{ vars.DOCKERHUB_USERNAME }}/skillgap-ai-frontend:latest
+
+  backend-ci:
+    name: Backend CI
+    runs-on: ubuntu-latest
+
+    steps:
+        - name: Code Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup Python
+          uses: actions/setup-python@v7
+          with:
+            python-version: '3.13'    
+            cache: pip
+
+        - name: Install Dependencies
+          run: pip install -r requirements.txt
+          working-directory: backend
+
+        - name: Install Lint Tools
+          run: pip install ruff black
+          working-directory: backend      
+
+        # Verifies PEP 8 Python code formatting in backend using Black without modifying files
+        - name: Black Format Check
+          run: black --check .
+          working-directory: backend  
+
+        - name: Docker Login
+          uses: docker/login-action@v4
+          with:
+            username: ${{ vars.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+        - name: Docker build and push
+          uses: docker/build-push-action@v6 
+          with:
+            context: ./backend
+            file: ./backend/Dockerfile
+            push: true
+            tags: ${{ vars.DOCKERHUB_USERNAME }}//skillgap-ai-backend:latest
+     
