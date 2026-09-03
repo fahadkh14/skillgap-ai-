@@ -10,7 +10,7 @@ jobs:
     name: Docker Scan 
     runs-on: ubuntu-latest
     strategy:
-      fail-fast:
+      fail-fast: false
       matrix:
         floders: ['backend','frontend']
 
