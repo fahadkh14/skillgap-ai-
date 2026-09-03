@@ -21,4 +21,5 @@ jobs:
   # Docker image security scanning
   docker-scan:
     uses: ./.github/workflows/Docker-scan.yml
-    secrets: inherit  
+    secrets:
+      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}  
