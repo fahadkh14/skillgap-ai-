@@ -89,7 +89,7 @@ jobs:
             tags: fahadkh14/skillgap-ai-backend:latest
 
   deploy:
-    need:
+    needs:
       - frontend-ci
       - backend-ci
 
