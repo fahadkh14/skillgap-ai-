@@ -16,4 +16,4 @@ jobs:
 
   #dependency-scan
   dependencies-scan:
-    uses: ./.github/workflows/dependency-scan.yml  
+    uses: ./.github/workflows/Dependency-scan.yml  
