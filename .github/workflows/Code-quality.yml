@@ -51,4 +51,4 @@ jobs:
       # Verifies PEP 8 Python code formatting in backend using Black without modifying files
       - name: Black Format Check
         run: black --check .
-        working-directory: backen      
+        working-directory: backend     
