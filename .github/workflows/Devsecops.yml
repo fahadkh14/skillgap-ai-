@@ -2,49 +2,70 @@ name: DevSecOps
 
 on:
   push:
-    
 
-jobs:     
+jobs:
 
-   # Code quality analysis
+  # -------------------------
+  # CI - Security & Quality
+  # -------------------------
+
   code-quality:
     uses: ./.github/workflows/Code-quality.yml
 
-  # Secret Scanning 
-  secret-scaning:
+  secret-scanning:
     uses: ./.github/workflows/secret-scanning.yml
 
-  #dependency-scan
   dependencies-scan:
-    uses: ./.github/workflows/Dependency-scan.yml  
+    uses: ./.github/workflows/Dependency-scan.yml
 
-  # Docker image security scanning
   docker-scan:
     uses: ./.github/workflows/Docker-scan.yml
     secrets: inherit
 
-  # SonarQube code analysis
   sonar-scan:
     uses: ./.github/workflows/Sonar-scan.yml
-    secrets: inherit   
+    secrets: inherit
 
-  # Code Tests
   code-tests:
-    uses: ./.github/workflows/Code-test.yml  
+    uses: ./.github/workflows/Code-test.yml
 
-  # push-to-docker-hub:
+
+  # -------------------------
+  # Docker Push
+  # -------------------------
+
   docker-push:
-    uses: ./.github/workflows/Docker-push.yml
-    needs: [code-quality,code-tests,sonar-scan,docker-scan,dependencies-scan,secret-scanning]
-    secrets: inherit  
+    needs:
+      - code-quality
+      - secret-scanning
+      - dependencies-scan
+      - docker-scan
+      - sonar-scan
+      - code-tests
 
-  ## ---- CD -----
+    uses: ./.github/workflows/Docker-push.yml
+    secrets: inherit
+
+
+  # -------------------------
+  # CD - Deploy
+  # -------------------------
+
   deploy:
-    needs: [docker-push]
+    needs:
+      - docker-push
+
     uses: ./.github/workflows/deploy.yml
     secrets: inherit
 
+
+  # -------------------------
+  # DAST
+  # -------------------------
+
   dast-scan:
-    needs: [deploy]
+    needs:
+      - deploy
+
     uses: ./.github/workflows/Dast.yml
-    secrets: inherit   
+    secrets: inherit
