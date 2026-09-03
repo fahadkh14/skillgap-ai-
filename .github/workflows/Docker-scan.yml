@@ -3,7 +3,7 @@
 name: Docker Scan
 
 on:
-workflow_call:
+  workflow_call:
 
 jobs:
   docker-scan:
