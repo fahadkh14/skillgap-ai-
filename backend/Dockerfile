@@ -9,7 +9,7 @@ COPY backend/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY backend/ .
-COPY database/ ./database/
+
 
 RUN useradd -m appuser && \
     chown -R appuser:appuser /app
