@@ -41,7 +41,7 @@ jobs:
             context: ./frontend
             file: ./frontend/Dockerfile   
             push: true
-            tags: ${{ vars.DOCKERHUB_USERNAME }}skillgap-ai-frontend:latest
+            tags: ${{ vars.DOCKERHUB_USERNAME }}/skillgap-frontend:latest
 
   backend-ci:
     name: Backend CI
@@ -87,5 +87,5 @@ jobs:
             context: ./backend
             file: ./backend/Dockerfile
             push: true
-            tags: ${{ vars.DOCKERHUB_USERNAME }}skillgap-ai-backend:latest
+            tags: ${{ vars.DOCKERHUB_USERNAME }}/skillgap-backend:latest
      
