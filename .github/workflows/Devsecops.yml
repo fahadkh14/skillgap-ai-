@@ -67,5 +67,5 @@ jobs:
     needs:
       - deploy
 
-    uses: ./.github/workflows/Dast.yml
+    uses: ./.github/workflows/DAST.yml
     secrets: inherit
