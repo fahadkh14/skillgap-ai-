@@ -7,13 +7,29 @@ def _get_devops_role_id(client, auth_headers):
 
 def test_analysis_calculation(client, auth_headers):
     # User has Linux (meets) and Docker at Beginner (below required Intermediate)
-    client.post("/api/skills", json={"skill_name": "Linux", "proficiency": "Intermediate",
-                                      "years_of_experience": 1}, headers=auth_headers)
-    client.post("/api/skills", json={"skill_name": "Docker", "proficiency": "Beginner",
-                                      "years_of_experience": 0.5}, headers=auth_headers)
+    client.post(
+        "/api/skills",
+        json={
+            "skill_name": "Linux",
+            "proficiency": "Intermediate",
+            "years_of_experience": 1,
+        },
+        headers=auth_headers,
+    )
+    client.post(
+        "/api/skills",
+        json={
+            "skill_name": "Docker",
+            "proficiency": "Beginner",
+            "years_of_experience": 0.5,
+        },
+        headers=auth_headers,
+    )
 
     role_id = _get_devops_role_id(client, auth_headers)
-    resp = client.post("/api/analysis", json={"job_role_id": role_id}, headers=auth_headers)
+    resp = client.post(
+        "/api/analysis", json={"job_role_id": role_id}, headers=auth_headers
+    )
     assert resp.status_code == 201
     data = resp.get_json()["data"]
 
@@ -27,12 +43,23 @@ def test_analysis_calculation(client, auth_headers):
 
 
 def test_readiness_score_is_deterministic(client, auth_headers):
-    client.post("/api/skills", json={"skill_name": "Linux", "proficiency": "Intermediate",
-                                      "years_of_experience": 1}, headers=auth_headers)
+    client.post(
+        "/api/skills",
+        json={
+            "skill_name": "Linux",
+            "proficiency": "Intermediate",
+            "years_of_experience": 1,
+        },
+        headers=auth_headers,
+    )
     role_id = _get_devops_role_id(client, auth_headers)
 
-    resp1 = client.post("/api/analysis", json={"job_role_id": role_id}, headers=auth_headers)
-    resp2 = client.post("/api/analysis", json={"job_role_id": role_id}, headers=auth_headers)
+    resp1 = client.post(
+        "/api/analysis", json={"job_role_id": role_id}, headers=auth_headers
+    )
+    resp2 = client.post(
+        "/api/analysis", json={"job_role_id": role_id}, headers=auth_headers
+    )
 
     score1 = resp1.get_json()["data"]["readiness_score"]
     score2 = resp2.get_json()["data"]["readiness_score"]

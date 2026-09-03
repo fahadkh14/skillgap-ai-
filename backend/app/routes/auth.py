@@ -3,7 +3,12 @@ from datetime import datetime, timezone
 
 import bcrypt
 from flask import Blueprint, request
-from flask_jwt_extended import create_access_token, get_jwt_identity, get_jwt, jwt_required
+from flask_jwt_extended import (
+    create_access_token,
+    get_jwt_identity,
+    get_jwt,
+    jwt_required,
+)
 from pymongo.errors import DuplicateKeyError
 
 from app.extensions import get_db
@@ -50,7 +55,9 @@ def register():
     if db.users.find_one({"email": email}):
         return error("An account with this email already exists", 409)
 
-    password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    password_hash = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode(
+        "utf-8"
+    )
     now = datetime.now(timezone.utc)
 
     user_doc = {
@@ -69,27 +76,32 @@ def register():
     user_id = str(result.inserted_id)
 
     # Create an empty profile shell for the new user
-    db.profiles.insert_one({
-        "user_id": result.inserted_id,
-        "full_name": full_name,
-        "email": email,
-        "phone": "",
-        "college": "",
-        "education": "",
-        "graduation_year": None,
-        "experience_level": "Student",
-        "current_role": "",
-        "target_role": "",
-        "bio": "",
-        "created_at": now,
-        "updated_at": now,
-    })
+    db.profiles.insert_one(
+        {
+            "user_id": result.inserted_id,
+            "full_name": full_name,
+            "email": email,
+            "phone": "",
+            "college": "",
+            "education": "",
+            "graduation_year": None,
+            "experience_level": "Student",
+            "current_role": "",
+            "target_role": "",
+            "bio": "",
+            "created_at": now,
+            "updated_at": now,
+        }
+    )
 
     logger.info("New user registered: %s", user_id)
 
     access_token = create_access_token(identity=user_id)
     return success(
-        {"access_token": access_token, "user": {"id": user_id, "name": full_name, "email": email}},
+        {
+            "access_token": access_token,
+            "user": {"id": user_id, "name": full_name, "email": email},
+        },
         "Account created successfully",
         201,
     )
@@ -107,7 +119,9 @@ def login():
     db = get_db()
     user = db.users.find_one({"email": email})
 
-    if not user or not bcrypt.checkpw(password.encode("utf-8"), user["password_hash"].encode("utf-8")):
+    if not user or not bcrypt.checkpw(
+        password.encode("utf-8"), user["password_hash"].encode("utf-8")
+    ):
         logger.info("Failed login attempt for email: %s", email)
         return error("Invalid email or password", 401)
 
@@ -119,7 +133,11 @@ def login():
     return success(
         {
             "access_token": access_token,
-            "user": {"id": user_id, "name": user.get("name"), "email": user.get("email")},
+            "user": {
+                "id": user_id,
+                "name": user.get("name"),
+                "email": user.get("email"),
+            },
         },
         "Login successful",
     )

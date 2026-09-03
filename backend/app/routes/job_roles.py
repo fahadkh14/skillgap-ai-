@@ -12,7 +12,11 @@ job_roles_bp = Blueprint("job_roles", __name__, url_prefix="/api/job-roles")
 @jwt_required()
 def list_job_roles():
     db = get_db()
-    roles = list(db.job_roles.find({}, {"name": 1, "description": 1, "skills": 1}).sort("name", 1))
+    roles = list(
+        db.job_roles.find({}, {"name": 1, "description": 1, "skills": 1}).sort(
+            "name", 1
+        )
+    )
     return success(serialize_doc(roles), "Job roles retrieved")
 
 

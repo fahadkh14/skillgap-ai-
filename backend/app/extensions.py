@@ -21,7 +21,9 @@ def init_mongo(app):
 def get_db():
     """Return the active MongoDB database handle."""
     if _db is None:
-        raise RuntimeError("MongoDB has not been initialized yet. Call init_mongo(app) first.")
+        raise RuntimeError(
+            "MongoDB has not been initialized yet. Call init_mongo(app) first."
+        )
     return _db
 
 

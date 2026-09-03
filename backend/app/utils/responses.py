@@ -2,7 +2,11 @@ from flask import jsonify
 
 
 def success(data=None, message="Success", status_code=200):
-    payload = {"success": True, "message": message, "data": data if data is not None else {}}
+    payload = {
+        "success": True,
+        "message": message,
+        "data": data if data is not None else {},
+    }
     return jsonify(payload), status_code
 
 

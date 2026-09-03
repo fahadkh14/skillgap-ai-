@@ -68,8 +68,11 @@ def upload_resume():
     }
     db.resumes.insert_one(resume_record)
 
-    logger.info("Resume uploaded and parsed for user %s (%d skills detected)",
-                user_id, len(detected_skills))
+    logger.info(
+        "Resume uploaded and parsed for user %s (%d skills detected)",
+        user_id,
+        len(detected_skills),
+    )
 
     return success(
         {"detected_skills": detected_skills, "filename": filename},

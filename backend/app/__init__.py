@@ -24,7 +24,11 @@ def create_app(config_class=Config):
     configure_logging(app)
     logger = logging.getLogger("skillgap")
 
-    CORS(app, resources={r"/api/*": {"origins": app.config["CORS_ORIGINS"]}}, supports_credentials=True)
+    CORS(
+        app,
+        resources={r"/api/*": {"origins": app.config["CORS_ORIGINS"]}},
+        supports_credentials=True,
+    )
 
     jwt.init_app(app)
     init_mongo(app)
@@ -52,26 +56,31 @@ def create_app(config_class=Config):
     app.register_blueprint(health_bp)
 
     from app.middleware.error_handler import register_error_handlers
+
     register_error_handlers(app)
 
     @jwt.expired_token_loader
     def expired_token_callback(jwt_header, jwt_payload):
         from app.utils.responses import error
+
         return error("Session expired. Please log in again.", 401)
 
     @jwt.invalid_token_loader
     def invalid_token_callback(reason):
         from app.utils.responses import error
+
         return error("Invalid authentication token.", 401)
 
     @jwt.unauthorized_loader
     def missing_token_callback(reason):
         from app.utils.responses import error
+
         return error("Authentication is required to access this resource.", 401)
 
     @jwt.revoked_token_loader
     def revoked_token_callback(jwt_header, jwt_payload):
         from app.utils.responses import error
+
         return error("Session has been logged out. Please log in again.", 401)
 
     logger.info("SkillGap AI backend application started")

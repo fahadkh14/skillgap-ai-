@@ -6,6 +6,7 @@ mentions of known catalog skills using word-boundary matching against
 the skills collection. No resume content is persisted to the database
 or logs — only the detected skill names are returned to the caller.
 """
+
 import io
 import logging
 import re

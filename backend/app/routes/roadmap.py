@@ -6,7 +6,12 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import get_db
 from app.services.roadmap_service import RoadmapService
 from app.utils.responses import success, error
-from app.utils.validators import serialize_doc, to_object_id, is_valid_object_id, VALID_ROADMAP_STATUSES
+from app.utils.validators import (
+    serialize_doc,
+    to_object_id,
+    is_valid_object_id,
+    VALID_ROADMAP_STATUSES,
+)
 
 roadmap_bp = Blueprint("roadmap", __name__, url_prefix="/api/roadmap")
 
@@ -26,11 +31,16 @@ def get_roadmap():
     if not roadmap:
         # Explicitly send data: null (not {}) so the frontend can tell
         # "no roadmap yet" apart from "a roadmap with no items".
-        return jsonify({
-            "success": True,
-            "message": "No roadmap has been generated yet",
-            "data": None,
-        }), 200
+        return (
+            jsonify(
+                {
+                    "success": True,
+                    "message": "No roadmap has been generated yet",
+                    "data": None,
+                }
+            ),
+            200,
+        )
 
     return success(serialize_doc(roadmap), "Roadmap retrieved")
 
@@ -62,7 +72,9 @@ def update_roadmap_item(roadmap_id):
     db = get_db()
     user_id = to_object_id(get_jwt_identity())
 
-    roadmap = db.roadmaps.find_one({"_id": to_object_id(roadmap_id), "user_id": user_id})
+    roadmap = db.roadmaps.find_one(
+        {"_id": to_object_id(roadmap_id), "user_id": user_id}
+    )
     if not roadmap:
         return error("Roadmap not found", 404)
 
@@ -88,11 +100,13 @@ def update_roadmap_item(roadmap_id):
 
     db.roadmaps.update_one(
         {"_id": roadmap["_id"]},
-        {"$set": {
-            "items": items,
-            "overall_progress": overall_progress,
-            "updated_at": datetime.now(timezone.utc),
-        }},
+        {
+            "$set": {
+                "items": items,
+                "overall_progress": overall_progress,
+                "updated_at": datetime.now(timezone.utc),
+            }
+        },
     )
 
     updated_roadmap = db.roadmaps.find_one({"_id": roadmap["_id"]})

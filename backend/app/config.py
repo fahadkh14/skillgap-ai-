@@ -10,9 +10,7 @@ class Config:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(hours=12)
     JWT_TOKEN_LOCATION = ["headers"]
 
-    MONGO_URI = os.environ.get(
-        "MONGO_URI", "mongodb://localhost:27017/skillgap"
-    )
+    MONGO_URI = os.environ.get("MONGO_URI", "mongodb://localhost:27017/skillgap")
     MONGO_DB_NAME = os.environ.get("MONGO_DB_NAME", "skillgap")
 
     CORS_ORIGINS = os.environ.get("CORS_ORIGINS", "http://localhost:8050").split(",")

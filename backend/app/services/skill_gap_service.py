@@ -13,6 +13,7 @@ The algorithm is intentionally simple and transparent (no randomness):
 
     readiness_score = round(100 * sum(earned_weight) / sum(total_weight))
 """
+
 from datetime import datetime, timezone
 from app.utils.validators import PROFICIENCY_RANK
 
@@ -33,7 +34,7 @@ def _priority_for(required, weight, gap_ranks):
     score = 0
     score += 3 if required else 0
     score += min(weight, 15) / 5  # 0-3 points
-    score += min(gap_ranks, 4)     # 0-4 points
+    score += min(gap_ranks, 4)  # 0-4 points
 
     if score >= 7:
         return "Critical"
@@ -85,38 +86,44 @@ class SkillGapAnalysisService:
             if user_skill is None:
                 gap_ranks = 4  # fully missing -> maximum gap
                 priority = _priority_for(required, weight, gap_ranks)
-                missing_skills.append({
-                    "skill_name": req_name,
-                    "required": required,
-                    "weight": weight,
-                    "minimum_proficiency": min_prof,
-                    "priority": priority,
-                })
+                missing_skills.append(
+                    {
+                        "skill_name": req_name,
+                        "required": required,
+                        "weight": weight,
+                        "minimum_proficiency": min_prof,
+                        "priority": priority,
+                    }
+                )
                 continue
 
             user_rank = _proficiency_rank(user_skill.get("proficiency", "Beginner"))
 
             if user_rank >= min_rank:
                 earned_weight += weight
-                matched_skills.append({
-                    "skill_name": req_name,
-                    "required": required,
-                    "weight": weight,
-                    "user_proficiency": user_skill.get("proficiency"),
-                    "minimum_proficiency": min_prof,
-                })
+                matched_skills.append(
+                    {
+                        "skill_name": req_name,
+                        "required": required,
+                        "weight": weight,
+                        "user_proficiency": user_skill.get("proficiency"),
+                        "minimum_proficiency": min_prof,
+                    }
+                )
             else:
                 earned_weight += weight * 0.5
                 gap_ranks = max(min_rank - user_rank, 1)
                 priority = _priority_for(required, weight, gap_ranks)
-                partial_skills.append({
-                    "skill_name": req_name,
-                    "required": required,
-                    "weight": weight,
-                    "user_proficiency": user_skill.get("proficiency"),
-                    "minimum_proficiency": min_prof,
-                    "priority": priority,
-                })
+                partial_skills.append(
+                    {
+                        "skill_name": req_name,
+                        "required": required,
+                        "weight": weight,
+                        "user_proficiency": user_skill.get("proficiency"),
+                        "minimum_proficiency": min_prof,
+                        "priority": priority,
+                    }
+                )
 
         if total_weight == 0:
             readiness_score = 0

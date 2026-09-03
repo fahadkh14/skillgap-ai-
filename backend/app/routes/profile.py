@@ -10,8 +10,15 @@ from app.utils.validators import serialize_doc, to_object_id, VALID_EXPERIENCE_L
 profile_bp = Blueprint("profile", __name__, url_prefix="/api/profile")
 
 ALLOWED_FIELDS = [
-    "full_name", "phone", "college", "education", "graduation_year",
-    "experience_level", "current_role", "target_role", "bio",
+    "full_name",
+    "phone",
+    "college",
+    "education",
+    "graduation_year",
+    "experience_level",
+    "current_role",
+    "target_role",
+    "bio",
 ]
 
 
@@ -33,7 +40,10 @@ def update_profile():
     db = get_db()
     user_id = to_object_id(get_jwt_identity())
 
-    if "experience_level" in data and data["experience_level"] not in VALID_EXPERIENCE_LEVELS:
+    if (
+        "experience_level" in data
+        and data["experience_level"] not in VALID_EXPERIENCE_LEVELS
+    ):
         return error("Invalid experience level", 422)
 
     update_fields = {k: v for k, v in data.items() if k in ALLOWED_FIELDS}
@@ -50,6 +60,8 @@ def update_profile():
 
     # Keep the user's display name in sync if full_name changed
     if "full_name" in update_fields:
-        db.users.update_one({"_id": user_id}, {"$set": {"name": update_fields["full_name"]}})
+        db.users.update_one(
+            {"_id": user_id}, {"$set": {"name": update_fields["full_name"]}}
+        )
 
     return success(serialize_doc(result), "Profile updated successfully")

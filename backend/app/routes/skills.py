@@ -6,7 +6,10 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.extensions import get_db
 from app.utils.responses import success, error
 from app.utils.validators import (
-    serialize_doc, to_object_id, is_valid_object_id, VALID_PROFICIENCIES,
+    serialize_doc,
+    to_object_id,
+    is_valid_object_id,
+    VALID_PROFICIENCIES,
 )
 
 skills_bp = Blueprint("skills", __name__, url_prefix="/api/skills")
@@ -53,10 +56,12 @@ def add_skill():
     except (TypeError, ValueError):
         return error("Years of experience must be a non-negative number", 422)
 
-    existing = db.skills.find_one({
-        "user_id": user_id,
-        "skill_name": {"$regex": f"^{skill_name}$", "$options": "i"},
-    })
+    existing = db.skills.find_one(
+        {
+            "user_id": user_id,
+            "skill_name": {"$regex": f"^{skill_name}$", "$options": "i"},
+        }
+    )
     if existing:
         return error("You already have this skill in your profile", 409)
 

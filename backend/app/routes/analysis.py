@@ -38,8 +38,12 @@ def run_analysis():
     roadmap_service = RoadmapService(db)
     roadmap_service.generate(user_id, analysis_doc)
 
-    logger.info("Analysis run for user %s against role %s -> score %s",
-                user_id, job_role_id, analysis_doc["readiness_score"])
+    logger.info(
+        "Analysis run for user %s against role %s -> score %s",
+        user_id,
+        job_role_id,
+        analysis_doc["readiness_score"],
+    )
 
     return success(serialize_doc(analysis_doc), "Analysis completed successfully", 201)
 
@@ -49,9 +53,7 @@ def run_analysis():
 def list_analyses():
     db = get_db()
     user_id = to_object_id(get_jwt_identity())
-    analyses = list(
-        db.analyses.find({"user_id": user_id}).sort("created_at", -1)
-    )
+    analyses = list(db.analyses.find({"user_id": user_id}).sort("created_at", -1))
     return success(serialize_doc(analyses), "Analysis history retrieved")
 
 
@@ -63,7 +65,9 @@ def get_analysis(analysis_id):
 
     db = get_db()
     user_id = to_object_id(get_jwt_identity())
-    analysis = db.analyses.find_one({"_id": to_object_id(analysis_id), "user_id": user_id})
+    analysis = db.analyses.find_one(
+        {"_id": to_object_id(analysis_id), "user_id": user_id}
+    )
 
     if not analysis:
         return error("Analysis not found", 404)

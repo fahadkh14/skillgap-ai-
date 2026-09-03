@@ -1,10 +1,13 @@
 def test_register_success(client):
-    resp = client.post("/api/auth/register", json={
-        "full_name": "Jane Doe",
-        "email": "jane@example.com",
-        "password": "SecurePass123",
-        "confirm_password": "SecurePass123",
-    })
+    resp = client.post(
+        "/api/auth/register",
+        json={
+            "full_name": "Jane Doe",
+            "email": "jane@example.com",
+            "password": "SecurePass123",
+            "confirm_password": "SecurePass123",
+        },
+    )
     assert resp.status_code == 201
     data = resp.get_json()
     assert data["success"] is True
@@ -24,29 +27,38 @@ def test_register_duplicate_email_rejected(client):
 
 
 def test_register_password_mismatch(client):
-    resp = client.post("/api/auth/register", json={
-        "full_name": "Jane Doe",
-        "email": "jane2@example.com",
-        "password": "SecurePass123",
-        "confirm_password": "Different123",
-    })
+    resp = client.post(
+        "/api/auth/register",
+        json={
+            "full_name": "Jane Doe",
+            "email": "jane2@example.com",
+            "password": "SecurePass123",
+            "confirm_password": "Different123",
+        },
+    )
     assert resp.status_code == 422
 
 
 def test_login_success(client, registered_user):
-    resp = client.post("/api/auth/login", json={
-        "email": "test@example.com",
-        "password": "TestPass123",
-    })
+    resp = client.post(
+        "/api/auth/login",
+        json={
+            "email": "test@example.com",
+            "password": "TestPass123",
+        },
+    )
     assert resp.status_code == 200
     assert resp.get_json()["data"]["access_token"]
 
 
 def test_login_invalid_credentials(client, registered_user):
-    resp = client.post("/api/auth/login", json={
-        "email": "test@example.com",
-        "password": "WrongPassword",
-    })
+    resp = client.post(
+        "/api/auth/login",
+        json={
+            "email": "test@example.com",
+            "password": "WrongPassword",
+        },
+    )
     assert resp.status_code == 401
 
 
