@@ -87,3 +87,11 @@ jobs:
             file: ./backend/Dockerfile
             push: true
             tags: fahadkh14/skillgap-ai-backend:latest
+
+  deploy:
+    need:
+      - frontend-ci
+      - backend-ci
+
+    uses: ./.github/workflows/CD.yml 
+    secrets: inherit
