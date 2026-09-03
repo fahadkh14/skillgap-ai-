@@ -29,27 +29,6 @@ jobs:
           run: npm run lint 
           working-directory: frontend
 
-        - name: Docker Login
-          uses: docker/login-action@v3
-          with:
-            username: ${{ vars.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-        - name: Docker build and push
-          uses: docker/build-push-action@v6 
-          with:
-            context: ./frontend
-            file: ./frontend/Dockerfile   
-            push: true
-            tags: fahadkh14/skillgap-ai-frontend:latest
-  backend-ci:
-    name: Backend CI
-    runs-on: ubuntu-latest
-
-    steps:
-        - name: Code Checkout
-          uses: actions/checkout@v4
-
         - name: Setup Python
           uses: actions/setup-python@v7
           with:
@@ -74,24 +53,4 @@ jobs:
           run: black --check .
           working-directory: backend  
 
-        - name: Docker Login
-          uses: docker/login-action@v4
-          with:
-            username: ${{ vars.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-        - name: Docker build and push
-          uses: docker/build-push-action@v6 
-          with:
-            context: .
-            file: ./backend/Dockerfile
-            push: true
-            tags: fahadkh14/skillgap-ai-backend:latest
-
-  deploy:
-    needs:
-      - frontend-ci
-      - backend-ci
-
-    uses: ./.github/workflows/CD.yml 
-    secrets: inherit
+        
