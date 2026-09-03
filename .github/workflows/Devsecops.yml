@@ -1,0 +1,12 @@
+name: DevSecOps
+
+on:
+  push:
+    
+
+jobs:     
+
+   # Code quality analysis
+  code-quality:
+    uses: ./.github/workflows/Code-quality.yml
+    

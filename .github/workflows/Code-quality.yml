@@ -1,0 +1,54 @@
+# Goal - I have to do SAST for my Code
+
+name: Code Quality
+
+on: 
+  workflow_call:
+
+jobs:
+  sast:
+    name: Making SAST
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: Sethup Node JS 
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          working-directory: frontend
+
+      - name: Install Frontend Dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Run Frontend Linter
+        run: npm run lint
+        working-directory: frontend
+        
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.13'    
+          cache: pip
+
+      # Pip Upgrade Step Added
+      - name: Upgrade Pip
+        run: python -m pip install --upgrade pip
+          
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+        working-directory: backend
+
+      - name: Install Lint Tools
+        run: pip install ruff black
+        working-directory: backend      
+
+      # Verifies PEP 8 Python code formatting in backend using Black without modifying files
+      - name: Black Format Check
+        run: black --check .
+        working-directory: backen      
