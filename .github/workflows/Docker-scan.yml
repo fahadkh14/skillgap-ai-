@@ -1,0 +1,45 @@
+# Goal - Ensure the docker files and Docker images are security Tested
+
+name: Docker Scan
+
+on:
+  workflow_call:
+
+jobs:
+  docker-scan:
+    name: Docker Scan 
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast:
+      matrix:
+        floders: ['backend','frontend']
+
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+
+      - name: ${{ matrix.floders }} Dockerfile Lint
+        uses: hadolint/hadolint-action@v3.1.0  
+        with:
+          dockerfile: ${{ matrix.floders }}/Dockerfile
+
+      - name: Docker login
+        uses: docker/login-action@v4 
+        with:
+          username: ${{ vars.DOCKERHUB_USERNAME }} 
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Docker build ${{ matrix.floders }}
+        run: docker build -t ${{ vars.DOCKERHUB_USERNAME }}/skillgap-ai-${{ matrix.floders }}:latest  .
+        working-directory: ${{ matrix.floders }}
+
+      - name: Run Trivy valnerability Scanner
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: ${{ vars.DOCKERHUB_USERNAME }}/incidenthub${{ matrix.floders }}:latest  
+          format: 'table'
+          exit-code: '1'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'  
+                            

@@ -17,3 +17,8 @@ jobs:
   #dependency-scan
   dependencies-scan:
     uses: ./.github/workflows/Dependency-scan.yml  
+
+  # Docker image security scanning
+  docker-scan:
+    uses: ./.github/workflows/Docker-scan.yml
+    secrets: inherit  
