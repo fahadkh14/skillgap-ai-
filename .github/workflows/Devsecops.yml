@@ -9,4 +9,7 @@ jobs:
    # Code quality analysis
   code-quality:
     uses: ./.github/workflows/Code-quality.yml
-    
+
+  # Secret Scanning 
+  secert-scaning:
+    uses: ./.github/workflows/secert-scanning.yml

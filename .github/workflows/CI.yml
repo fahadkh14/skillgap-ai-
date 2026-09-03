@@ -1,7 +1,7 @@
 name: SkillGap-Ai
 
 on:
-  push:
+  workflow_call:
 
 jobs:
   frontend-ci:
