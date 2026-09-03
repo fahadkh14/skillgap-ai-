@@ -1,45 +1,51 @@
-# Goal - Ensure the docker files and Docker images are security Tested
+# Goal - Ensure the Dockerfiles and Docker images are security tested
 
 name: Docker Scan
 
 on:
-  workflow_call:
+workflow_call:
 
 jobs:
   docker-scan:
-    name: Docker Scan 
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        floders: ['backend','frontend']
+  name: Docker Scan
+  runs-on: ubuntu-latest
 
-    steps:
-      - name: Code Checkout
-        uses: actions/checkout@v4
 
-      - name: ${{ matrix.floders }} Dockerfile Lint
-        uses: hadolint/hadolint-action@v3.1.0  
-        with:
-          dockerfile: ${{ matrix.floders }}/Dockerfile
+  strategy:
+    fail-fast: false
+    matrix:
+      folders: ['backend', 'frontend']
 
-      - name: Docker login
-        uses: docker/login-action@v4 
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }} 
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+  steps:
+    # Checkout source code
+    - name: Code Checkout
+      uses: actions/checkout@v4
 
-      - name: Docker build ${{ matrix.floders }}
-        run: docker build -t ${{ vars.DOCKERHUB_USERNAME }}/skillgap-ai-${{ matrix.floders }}:latest  .
-        working-directory: ${{ matrix.floders }}
+    # Dockerfile security linting
+    - name: ${{ matrix.folders }} Dockerfile Lint
+      uses: hadolint/hadolint-action@v3.1.0
+      with:
+        dockerfile: ${{ matrix.folders }}/Dockerfile
 
-      - name: Run Trivy valnerability Scanner
-        uses: aquasecurity/trivy-action@v0.36.0
-        with:
-          image-ref: ${{ vars.DOCKERHUB_USERNAME }}/incidenthub${{ matrix.floders }}:latest  
-          format: 'table'
-          exit-code: '1'
-          ignore-unfixed: true
-          vuln-type: 'os,library'
-          severity: 'CRITICAL,HIGH'  
-                            
+    # Login to Docker Hub
+    - name: Docker Login
+      uses: docker/login-action@v3
+      with:
+        username: ${{ vars.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    # Build Docker image
+    - name: Docker Build ${{ matrix.folders }}
+      run: docker build -t "${{ vars.DOCKERHUB_USERNAME }}/skillgap-ai-${{ matrix.folders }}:latest" .
+      working-directory: ${{ matrix.folders }}
+
+    # Scan Docker image for vulnerabilities
+    - name: Run Trivy Vulnerability Scanner
+      uses: aquasecurity/trivy-action@v0.36.0
+      with:
+        image-ref: "${{ vars.DOCKERHUB_USERNAME }}/skillgap-ai-${{ matrix.folders }}:latest"
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'CRITICAL,HIGH'
